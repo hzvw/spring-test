@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: cloud-payment-service
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/spring-test?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true
@@ -6,3 +8,7 @@ spring:
     password: 123456
   redis:
     host: 127.0.0.1
+  profiles:
+    active: dev # 多环境配置加载内容dev/prod,不写就是默认default配置
+server:
+  port: 8001
