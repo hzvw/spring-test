@@ -18,6 +18,7 @@
         <module>seata-account-service2003</module>
         <module>seata-storage-service2002</module>
         <module>cloudalibaba-provider-payment9001</module>
+        <module>cloudalibaba-consumer-nacos-order83</module>
     </modules>
 
     <properties>
