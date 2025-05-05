@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @auther zzyy
  * @create 2024-01-06 14:06
  */
-@FeignClient(value = "seata-storage-service")
+@FeignClient(value = "seata-service-storage")
 public interface StorageFeignApi
 {
     /**

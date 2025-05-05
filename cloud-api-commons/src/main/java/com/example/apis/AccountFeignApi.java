@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @auther zzyy
  * @create 2024-01-06 14:07
  */
-@FeignClient(value = "seata-account-service")
+@FeignClient(value = "seata-service-account")
 public interface AccountFeignApi
 {
     //扣减账户余额

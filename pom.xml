@@ -14,11 +14,11 @@
         <module>mybatis-generate-2024</module>
         <module>cloud-consumer-order80</module>
         <module>cloud-api-commons</module>
-        <module>seata-order-service2001</module>
-        <module>seata-account-service2003</module>
-        <module>seata-storage-service2002</module>
         <module>cloudalibaba-provider-payment9001</module>
         <module>cloudalibaba-consumer-nacos-order83</module>
+        <module>seata-service-order2001</module>
+        <module>seata-service-storage2002</module>
+        <module>seata-service-account2003</module>
     </modules>
 
     <properties>
