@@ -2,6 +2,7 @@ package com.example.controller;
 
 import com.alibaba.fastjson2.JSON;
 import com.example.entities.Pay;
+import com.example.entities.PayDTO;
 import com.example.resp.ResultData;
 import com.example.service.PayService;
 import io.swagger.v3.oas.annotations.Operation;
