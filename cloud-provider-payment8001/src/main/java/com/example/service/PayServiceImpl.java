@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.entities.Pay;
 import com.example.mapper.PayMapper;
+//import io.seata.spring.annotation.GlobalTransactional;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,7 @@ public class PayServiceImpl implements PayService{
         return payMapper.deleteByPrimaryKey(id);
     }
     @Override
+//    @GlobalTransactional
     public int update(Pay pay){
         return payMapper.updateByPrimaryKeySelective(pay);
     }

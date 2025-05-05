@@ -1,7 +1,13 @@
 package com.example.controller;
 
+import com.alibaba.fastjson2.JSON;
+import com.example.apis.PayFeignApi;
+import com.example.entities.Order;
 import com.example.entities.PayDTO;
 import com.example.resp.ResultData;
+import com.example.service.OrderService;
+import io.seata.spring.annotation.GlobalTransactional;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -12,7 +18,17 @@ import org.springframework.web.client.RestTemplate;
  */
 @RestController
 public class OrderController{
-    public static final String PaymentSrv_URL = "http://localhost:8001";//先写死，硬编码
+//    public static final String PaymentSrv_URL = "http://localhost:8001";//先写死，硬编码
+
+    public static final String PaymentSrv_URL
+            = "http://cloud-payment-service";//服务注册中心上的微服务名称
+
+    @Resource
+    private PayFeignApi payFeignApi;
+
+    @Autowired
+    private OrderService orderService;
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -23,10 +39,28 @@ public class OrderController{
      * @param payDTO
      * @return
      */
-    @GetMapping("/consumer/pay/add")
-    public ResultData addOrder(PayDTO payDTO){
-        return restTemplate.postForObject(PaymentSrv_URL + "/pay/add",payDTO,ResultData.class);
+//    @PostMapping("/consumer/pay/add")
+//    public ResultData addOrder(@RequestBody PayDTO payDTO){
+//        //return restTemplate.postForObject(PaymentSrv_URL + "/pay/add",payDTO,ResultData.class);
+//
+//        System.out.println("第一步：模拟本地addOrder新增订单成功(省略sql操作)，第二步：再开启addPay支付微服务远程调用");
+//        ResultData resultData = payFeignApi.addPay(payDTO);
+//        System.out.println(JSON.toJSONString(payDTO));
+//        return resultData;
+//    }
+
+    @PostMapping("/consumer/pay/add")
+    @GlobalTransactional
+    public ResultData addOrder(@RequestBody PayDTO payDTO)
+    {
+        System.out.println("第一步：模拟本地addOrder新增订单成功(省略sql操作)，" +
+                "第二步：再开启addPay支付微服务远程调用");
+        Order order = new Order(1L,1L,10,1L,1);
+        orderService.add(order);
+        ResultData resultData = payFeignApi.addPay(payDTO);
+        return resultData;
     }
+
     // 删除+修改操作作为家庭作业，O(∩_∩)O。。。。。。。
     @GetMapping("/consumer/pay/get/{id}")
     public ResultData getPayInfo(@PathVariable("id") Integer id){

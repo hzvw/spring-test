@@ -1,30 +1,34 @@
 package com.example.controller;
 
+import com.alibaba.fastjson2.JSON;
 import com.example.entities.Pay;
-import com.example.entities.PayDTO;
 import com.example.resp.ResultData;
 import com.example.service.PayService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 @EnableDiscoveryClient
 @RestController
 @Tag(name = "支付微服务模块",description = "支付CRUD")
-public class PayController
-{
+@RefreshScope // 动态刷新配置
+public class PayController {
     @Resource
     PayService payService;
 
     @PostMapping(value = "/pay/add")
     @Operation(summary = "新增",description = "新增支付流水方法,json串做参数")
-    public ResultData<String> addPay(@RequestBody Pay pay)
+    public ResultData addPay(@RequestBody Pay pay)
     {
         System.out.println(pay.toString());
+        System.out.println(JSON.toJSONString(pay));
         int i = payService.add(pay);
         return ResultData.success("成功插入记录，返回值："+i);
+        //return ResultData.success("成功插入记录，返回值：");
     }
 
     @DeleteMapping(value = "/pay/del/{id}")
@@ -54,4 +58,16 @@ public class PayController
     }
 
     //全部查询getall作为家庭作业
+
+
+    @Value("${server.port}")
+    private String port;
+
+    @GetMapping(value = "/pay/get/info")
+    private String getInfoByConsul(@Value("${atguigu.info}") String atguiguInfo)
+    {
+        return "atguiguInfo: "+atguiguInfo+"\t"+"port: "+port;
+    }
+
+
 }
