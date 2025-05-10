@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "支付微服务模块",description = "支付CRUD")
 @RefreshScope // 动态刷新配置
 public class PayController {
+
+
+
     @Resource
     PayService payService;
 

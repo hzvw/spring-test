@@ -19,6 +19,7 @@
         <module>seata-service-order2001</module>
         <module>seata-service-storage2002</module>
         <module>seata-service-account2003</module>
+        <module>leet-spring</module>
     </modules>
 
     <properties>
