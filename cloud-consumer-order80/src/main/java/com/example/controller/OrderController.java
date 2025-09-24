@@ -1,23 +1,41 @@
 package com.example.controller;
 
+import com.example.anno.Idempotent;
 import com.example.apis.PayFeignApi;
+import com.example.dto.ApiResponse;
+import com.example.dto.Order;
+import com.example.dto.OrderModificationRequest;
+import com.example.dto.OrderModifyLog;
 import com.example.entities.PayDTO;
+import com.example.exp.BusinessException;
 import com.example.resp.ResultData;
+import com.example.service.OrderService;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * @auther zzyy
  * @create 2023-11-04 16:00
  */
 @RestController
+@Slf4j
+@EnableJpaAuditing//在启动类或配置类上添加 @EnableJpaAuditing注解，以使 @CreatedDate和 @LastModifiedDate生效。
 public class OrderController{
     public static final String PaymentSrv_URL
             = "http://cloud-payment-service";//服务注册中心上的微服务名称
 
     @Resource
     private PayFeignApi payFeignApi;
+
+    @Autowired
+    private OrderService orderService;
 
 //    @Autowired
 //    private OrderService orderService;
@@ -51,7 +69,50 @@ public class OrderController{
     @GetMapping("/consumer/pay/get/{id}")
     public ResultData getPayInfo(@PathVariable("id") Integer id){
         //return restTemplate.getForObject(PaymentSrv_URL + "/pay/get/"+id, ResultData.class, id);
-        return null;
+        return payFeignApi.getPayInfo(id);
+    }
+
+    /**
+     * 修改订单信息
+     */
+    @PutMapping("/modify_order/{orderId}")
+    @Idempotent(key = "'orderModify:' + #orderId", timeout = 30) // key由订单ID确定
+    public ResultData modifyOrder(
+            @PathVariable("orderId") Long orderId,
+            @RequestBody @Valid OrderModificationRequest request,
+            @RequestHeader("X-Operator-Id") Long operatorId,
+            @RequestHeader("X-Operator-Type") Integer operatorType) {
+
+        try {
+            Order updatedOrder = orderService.modifyOrder(orderId, request, operatorId, operatorType);
+            return ResultData.success(updatedOrder);
+        } catch (BusinessException e) {
+            //return ApiResponse.error("MODIFY_FAILED", e.getMessage());
+            log.error(e.getMessage());
+            return ResultData.fail("1001", "出错了");
+        }
+    }
+
+    /**
+     * 获取订单修改历史
+     */
+    @GetMapping("/{orderId}/modification-history")
+    public ApiResponse<List<OrderModifyLog>> getModificationHistory(
+            @PathVariable Long orderId) {
+
+        List<OrderModifyLog> history = orderService.getModificationHistory(orderId);
+        return ApiResponse.success(history);
+    }
+
+    /**
+     * 获取订单可修改字段信息
+     */
+    @GetMapping("/{orderId}/modifiable-fields")
+    public ApiResponse<Set<String>> getModifiableFields(
+            @PathVariable Long orderId) {
+
+        Set<String> fields = orderService.getModifiableFields(orderId);
+        return ApiResponse.success(fields);
     }
 
 

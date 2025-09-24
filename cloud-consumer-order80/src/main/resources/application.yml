@@ -1,9 +1,15 @@
+# 应用通用配置
 server:
   port: 80
 
 spring:
   application:
     name: cloud-consumer-order
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/spring-test?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
   ####Spring Cloud Consul for Service Discovery
   cloud:
     consul:
@@ -15,5 +21,27 @@ spring:
       config:
         profile-separator: '-' # default value is ","，we update '-'
         format: YAML
+  data:
+    redis:
+      host: localhost
+      port: 6379
+# JWT配置 (这些自定义属性会在你的JwtUtil类中通过@Value注入)
+jwt:
+  secret: helloworld # 生产环境务必使用复杂、保密的密钥，并通过环境变量注入
+  expiration:
+    ms: 3600000 # 访问令牌过期时间（1小时），单位毫秒
+    refresh-token: 2592000000 # 刷新令牌过期时间（30天），单位毫秒（若实现刷新令牌机制）
 
-# welcome to atguigu ,if you need help ,please send email to zzyybs@126.com
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.example: DEBUG # 将你的项目包名调整为DEBUG级别以便调试
+    org.springframework.security: DEBUG # 需要时开启Security调试日志
+    org.hibernate.SQL: DEBUG # 显示SQL语句
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE # 显示SQL参数（慎用，日志量大）
+  file:
+    name: logs/application.log # 输出到文件
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
