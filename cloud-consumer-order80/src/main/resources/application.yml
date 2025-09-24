@@ -27,7 +27,7 @@ spring:
       port: 6379
 # JWT配置 (这些自定义属性会在你的JwtUtil类中通过@Value注入)
 jwt:
-  secret: helloworld # 生产环境务必使用复杂、保密的密钥，并通过环境变量注入
+  secret: usNhs5a27rQAIuvkO8LavJ0LzA2MKuja1ygFVBPh4FWIST2UjC8BSOwFxkFziq9c # 生产环境务必使用复杂、保密的密钥，并通过环境变量注入
   expiration:
     ms: 3600000 # 访问令牌过期时间（1小时），单位毫秒
     refresh-token: 2592000000 # 刷新令牌过期时间（30天），单位毫秒（若实现刷新令牌机制）
@@ -45,3 +45,13 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+# application.yml
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info # 明确暴露 health 和 info 端点
+  endpoint:
+    health:
+      enabled: false # 确保健康端点启用（通常默认就是 true）
+      show-details: when_authorized # 或 always, never

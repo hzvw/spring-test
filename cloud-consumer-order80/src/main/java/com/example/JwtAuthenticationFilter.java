@@ -28,6 +28,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+        // 添加登录接口白名单检查
+        if (request.getRequestURI().startsWith("/api/auth/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // 添加调试日志
+        System.out.println("Processing request to: " + request.getRequestURI());
         
         final String authorizationHeader = request.getHeader("Authorization"); // 从请求头获取Authorization
 

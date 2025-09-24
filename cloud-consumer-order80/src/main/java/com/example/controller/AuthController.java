@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,9 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
+    @Autowired
     private final AuthenticationManager authenticationManager;
+    @Autowired
     private final JwtUtil jwtUtil;
+    @Autowired
     private final UserDetailsService userDetailsService; // 这是Spring Security的接口，你需要实现它
+    @Autowired
     private final PasswordEncoder passwordEncoder; // 用于注册时加密密码
     // 假设有一个UserService或UserRepository用于用户操作
     @Autowired
@@ -33,20 +38,21 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) {
         try {
-            // 使用AuthenticationManager进行认证[6](@ref)
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
+            // 执行认证
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authRequest.getUsername(),
+                            authRequest.getPassword()
+                    )
             );
+            // 生成JWT
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String jwt = jwtUtil.generateToken(userDetails);
+
+            return ResponseEntity.ok(new AuthResponse(jwt));
         } catch (Exception e) {
             throw new RuntimeException("用户名或密码错误", e); // 认证失败
         }
-
-        // 认证成功后，加载用户详情并生成JWT[9,10](@ref)
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
-        final String jwt = jwtUtil.generateToken(userDetails);
-
-        // 返回JWT令牌（也可以封装成一个对象返回更多信息）
-        return ResponseEntity.ok(new AuthResponse(jwt));
     }
 
     // 用户注册（简单示例）[4](@ref)
@@ -70,6 +76,7 @@ public class AuthController {
         // 这里简单返回成功消息
         return ResponseEntity.ok("用户注册成功");
     }
+
 }
 
 // 登录请求DTO
