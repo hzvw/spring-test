@@ -13,12 +13,15 @@ import com.example.service.OrderService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
+
+//import org.apache.skywalking.apm.toolkit.trace.Trace;
 
 /**
  * @auther zzyy
@@ -67,8 +70,10 @@ public class OrderController{
 
     // 删除+修改操作作为家庭作业，O(∩_∩)O。。。。。。。
     @GetMapping("/consumer/pay/get/{id}")
+//    @Trace
     public ResultData getPayInfo(@PathVariable("id") Integer id){
         //return restTemplate.getForObject(PaymentSrv_URL + "/pay/get/"+id, ResultData.class, id);
+        log.info("请求开始");
         return payFeignApi.getPayInfo(id);
     }
 

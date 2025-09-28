@@ -8,11 +8,13 @@ import com.example.service.PayService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
+@Slf4j
 @EnableDiscoveryClient
 @RestController
 @Tag(name = "支付微服务模块",description = "支付CRUD")
@@ -57,6 +59,7 @@ public class PayController {
     @Operation(summary = "按照ID查流水",description = "查询支付流水方法")
     public ResultData<Pay> getById(@PathVariable("id") Integer id)
     {
+        log.info("请求到达pay");
         Pay pay = payService.getById(id);
         return ResultData.success(pay);
     }

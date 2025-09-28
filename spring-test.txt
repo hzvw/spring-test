@@ -1,3 +1,6 @@
 consul agent -dev -client=0.0.0.0
 
-
+java -javaagent:/path/to/your/agent/skywalking-agent.jar \
+     -DSW_AGENT_NAME=your-application-name \        # 在SkyWalking UI中显示的服务名
+     -DSW_AGENT_COLLECTOR_BACKEND_SERVICES=your-oap-server-ip:11800 \  # OAP服务器地址
+     -jar your-spring-boot-app.jar
